@@ -1,0 +1,365 @@
+@import 'tailwindcss';
+
+/*
+  FinTrack design system — refined after studying the Pocketwise reference:
+  deep navy canvas with radial glows, mint accent, Space Grotesk display type,
+  glassy gradient panels, tabular numerals.
+*/
+
+@theme {
+  --font-display: 'Space Grotesk', 'Inter', sans-serif;
+  --font-sans: 'Inter', system-ui, sans-serif;
+
+  --color-navy: #080f20;
+  --color-navy-raise: #0d1729;
+  --color-mint: #74f6c8;
+  --color-mint-deep: #4fd7a8;
+  --color-lavender: #a49cff;
+  --color-cloud: #eef4ff;
+  --color-ink-soft: #90a0b9;
+  --color-line: rgba(177, 199, 232, 0.105);
+}
+
+html, body, #root {
+  height: 100%;
+}
+
+html, body {
+  overflow-x: clip;
+}
+
+body {
+  margin: 0;
+  min-width: 320px;
+  min-height: 100vh;
+  font-family: var(--font-sans);
+  color: var(--color-cloud);
+  background:
+    radial-gradient(ellipse 43% 36% at 77% -4%, rgba(55, 137, 151, 0.16), transparent 80%),
+    radial-gradient(ellipse 48% 48% at 112% 25%, rgba(68, 66, 143, 0.12), transparent 80%),
+    var(--color-navy);
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+}
+
+button, input, select {
+  font: inherit;
+}
+
+button {
+  cursor: pointer;
+}
+
+button:disabled {
+  cursor: not-allowed;
+}
+
+button:focus-visible, input:focus-visible, select:focus-visible {
+  outline: 2px solid var(--color-mint);
+  outline-offset: 3px;
+}
+
+::selection {
+  color: #071322;
+  background: var(--color-mint);
+}
+
+h1, h2, h3, .num {
+  font-family: var(--font-display);
+}
+
+.num {
+  font-variant-numeric: tabular-nums;
+  letter-spacing: -0.5px;
+}
+
+/* ── Motion ─────────────────────────────────────────────────────────── */
+
+@keyframes view-in {
+  from { opacity: 0; transform: translateY(8px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes fade-in {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes modal-in {
+  from { opacity: 0; transform: translateY(10px) scale(0.98); }
+  to { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+.view-in { animation: view-in 0.35s ease both; }
+
+/* ── Surfaces ───────────────────────────────────────────────────────── */
+
+.panel {
+  border: 1px solid rgba(171, 195, 225, 0.105);
+  border-radius: 15px;
+  background: linear-gradient(145deg, rgba(24, 38, 61, 0.78), rgba(16, 28, 48, 0.69));
+  box-shadow: inset 0 1px rgba(255, 255, 255, 0.06), 0 18px 50px rgba(3, 8, 19, 0.09);
+  backdrop-filter: blur(20px);
+  transition: border-color 0.25s;
+}
+
+.panel:hover {
+  border-color: rgba(143, 182, 203, 0.2);
+}
+
+.stat-card {
+  position: relative;
+  overflow: hidden;
+  border: 1px solid rgba(171, 195, 225, 0.105);
+  border-radius: 15px;
+  background: linear-gradient(137deg, rgba(29, 44, 68, 0.83), rgba(18, 31, 53, 0.73));
+  box-shadow: inset 0 1px rgba(255, 255, 255, 0.06), 0 14px 35px rgba(2, 7, 18, 0.09);
+  backdrop-filter: blur(18px);
+  transition: transform 0.25s, border-color 0.25s;
+}
+
+.stat-card:hover {
+  transform: translateY(-3px);
+  border-color: rgba(143, 182, 203, 0.2);
+}
+
+/* Featured (first) stat card: mint radial wash + concentric ring glow */
+.stat-feature {
+  border-color: rgba(114, 244, 200, 0.24);
+  background:
+    radial-gradient(ellipse 70% 75% at 95% 0%, rgba(64, 209, 162, 0.24), transparent),
+    linear-gradient(120deg, #173b46, #172a3f 77%);
+  box-shadow: inset 0 1px rgba(185, 255, 229, 0.16), 0 20px 45px rgba(19, 121, 109, 0.12);
+}
+
+.feature-glow {
+  position: absolute;
+  width: 185px;
+  height: 185px;
+  right: -34px;
+  top: -76px;
+  border: 1px solid rgba(138, 255, 212, 0.16);
+  border-radius: 50%;
+  box-shadow:
+    0 0 0 23px rgba(113, 239, 201, 0.035),
+    0 0 0 46px rgba(113, 239, 201, 0.024),
+    0 0 0 69px rgba(113, 239, 201, 0.016);
+  pointer-events: none;
+}
+
+/* ── Sidebar ────────────────────────────────────────────────────────── */
+
+.sidebar {
+  position: fixed;
+  z-index: 20;
+  inset: 0 auto 0 0;
+  width: 248px;
+  display: flex;
+  flex-direction: column;
+  padding: 30px 16px 22px;
+  background: linear-gradient(180deg, rgba(13, 23, 41, 0.98), rgba(10, 19, 35, 0.99));
+  border-right: 1px solid var(--color-line);
+}
+
+.brand-mark {
+  width: 39px;
+  height: 39px;
+  flex: 0 0 39px;
+  display: grid;
+  place-items: center;
+  border: 1px solid rgba(117, 242, 201, 0.26);
+  border-radius: 12px;
+  background: #0b1326;
+  box-shadow: 0 4px 24px rgba(39, 207, 157, 0.12), inset 0 1px rgba(255, 255, 255, 0.06);
+  overflow: hidden;
+}
+
+.nav-item {
+  width: 100%;
+  height: 45px;
+  display: flex;
+  align-items: center;
+  gap: 13px;
+  position: relative;
+  border: 1px solid transparent;
+  border-radius: 10px;
+  padding: 0 17px;
+  background: transparent;
+  color: #899bb4;
+  text-align: left;
+  font-size: 13px;
+  font-weight: 600;
+  transition: color 0.2s, background 0.2s, border-color 0.2s, transform 0.2s;
+}
+
+.nav-item:hover {
+  color: #f3f8ff;
+  background: rgba(255, 255, 255, 0.04);
+  transform: translate(2px);
+}
+
+.nav-item.selected {
+  color: #98ffe0;
+  background: linear-gradient(90deg, rgba(63, 184, 154, 0.14), rgba(36, 83, 90, 0.07));
+  border-color: rgba(103, 226, 190, 0.16);
+}
+
+.nav-indicator {
+  position: absolute;
+  left: 0;
+  top: 10px;
+  bottom: 10px;
+  width: 2px;
+  border-radius: 4px;
+  background: var(--color-mint);
+  box-shadow: 0 0 11px var(--color-mint);
+}
+
+/* ── Chips, buttons, misc ───────────────────────────────────────────── */
+
+.stat-icon {
+  width: 31px;
+  height: 31px;
+  display: grid;
+  place-items: center;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 9px;
+  background: rgba(255, 255, 255, 0.06);
+  color: #a8dcca;
+}
+
+.category-mark {
+  width: 40px;
+  height: 40px;
+  display: grid;
+  place-items: center;
+  flex: 0 0 40px;
+  border-radius: 11px;
+}
+
+.live-dot {
+  display: inline-block;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--color-mint);
+  box-shadow: 0 0 12px rgba(116, 246, 200, 0.7);
+}
+
+.chart-tooltip {
+  min-width: 175px;
+  border: 1px solid rgba(180, 207, 225, 0.2);
+  border-radius: 10px;
+  padding: 11px 13px;
+  color: #ebf4ff;
+  background: rgba(11, 24, 41, 0.95);
+  box-shadow: 0 15px 35px rgba(0, 0, 0, 0.25);
+  backdrop-filter: blur(18px);
+}
+
+/* ── Recharts fixes ─────────────────────────────────────────────────── */
+
+.recharts-responsive-container,
+.recharts-wrapper,
+.recharts-surface {
+  max-width: 100%;
+}
+
+.recharts-responsive-container > div {
+  width: 100% !important;
+}
+
+.recharts-surface:focus {
+  outline: none;
+}
+
+/* ── Scrollbars ─────────────────────────────────────────────────────── */
+
+* {
+  scrollbar-width: thin;
+  scrollbar-color: #35506b transparent;
+}
+
+/* ── Responsive layout helpers ──────────────────────────────────────── */
+
+.main-content {
+  min-height: 100vh;
+  margin-left: 248px;
+  padding: 35px clamp(28px, 3.15vw, 56px) 18px;
+  position: relative;
+}
+
+.main-content::before {
+  content: "";
+  pointer-events: none;
+  position: absolute;
+  z-index: -1;
+  top: -170px;
+  right: 0;
+  width: 550px;
+  height: 510px;
+  background: radial-gradient(ellipse, rgba(57, 125, 141, 0.12), transparent 64%);
+}
+
+@media (max-width: 1100px) {
+  .sidebar {
+    width: 72px;
+    padding: 25px 10px;
+  }
+  .sidebar .brand-word,
+  .sidebar .sidebar-label,
+  .sidebar .nav-label,
+  .sidebar .sidebar-bottom {
+    display: none;
+  }
+  .sidebar .nav-list {
+    margin-top: 40px;
+  }
+  .sidebar .nav-item {
+    width: 50px;
+    padding: 0;
+    justify-content: center;
+  }
+  .main-content {
+    margin-left: 72px;
+  }
+}
+
+@media (max-width: 640px) {
+  .sidebar {
+    display: none;
+  }
+  .main-content {
+    margin-left: 0;
+    padding: 20px 16px 96px;
+  }
+  .mobile-tabbar {
+    position: fixed;
+    z-index: 30;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    display: flex;
+    justify-content: space-around;
+    height: 67px;
+    padding-bottom: env(safe-area-inset-bottom);
+    border-top: 1px solid rgba(171, 195, 225, 0.15);
+    background: rgba(11, 23, 40, 0.96);
+    backdrop-filter: blur(20px);
+  }
+}
+
+.mobile-tabbar {
+  display: none;
+}
+
+@media (max-width: 1100px) {
+  .mobile-tabbar { display: none; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+  }
+}
