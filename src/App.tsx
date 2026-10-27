@@ -17,6 +17,7 @@ interface Expense {
   amount: number;
   category: Category;
   description: string;
+  note?: string;
 }
 
 interface Toast {
@@ -256,7 +257,7 @@ function Sidebar({ view, setView, onExport, onClear, onUndo, canUndo }: {
 // ─── Add Expense Modal ────────────────────────────────────────────────
 
 function AddExpenseModal({ onClose, onAdd }: { onClose: () => void; onAdd: (e: Expense) => void }) {
-  const [form, setForm] = useState({ date: today(), amount: "", category: "Food" as Category, description: "" });
+  const [form, setForm] = useState({ date: today(), amount: "", category: "Food" as Category, description: "", note: "" });
   const [errors, setErrors] = useState<Record<string, string>>({});
   const amountRef = useRef<HTMLInputElement>(null);
 
@@ -273,7 +274,7 @@ function AddExpenseModal({ onClose, onAdd }: { onClose: () => void; onAdd: (e: E
   const submit = (e: React.FormEvent) => {
     e.preventDefault();
     if (!validate()) return;
-    onAdd({ id: uid(), date: form.date, amount: Number(form.amount), category: form.category, description: form.description.trim() });
+    onAdd({ id: uid(), date: form.date, amount: Number(form.amount), category: form.category, description: form.description.trim(), note: form.note.trim() });
     onClose();
   };
 

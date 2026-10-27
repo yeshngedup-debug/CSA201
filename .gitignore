@@ -21,3 +21,14 @@ logs/
 
 # Superpowers docs
 docs/superpowers/
+
+# Build / test artifacts (never commit class files or test dumps)
+backend/out/
+backend/out-test/
+**/*.class
+backend/*.csv
+backend/export_test.csv
+backend/test_export.csv
+backend/test2.csv
+backend/build_errors.txt
+backend/data/*.tmp
