@@ -92,6 +92,15 @@ public class ApiServer {
             case "GET" -> {
                 if (path.equals("/api/health")) {
                     respond(exchange, 200, Map.of("status", "ok", "app", "Teru Care"));
+                } else if (path.equals("/api/stats")) {
+                    Map<String, Object> stats = new LinkedHashMap<>(service.summary());
+                    stats.put("canUndo", service.canUndo());
+                    Map<String, Object> body = new LinkedHashMap<>();
+                    body.put("count", stats.getOrDefault("count", 0));
+                    body.put("total", stats.getOrDefault("total", 0.0));
+                    body.put("topCategory", stats.getOrDefault("topCategory", null));
+                    body.put("canUndo", stats.get("canUndo"));
+                    respond(exchange, 200, body);
                 } else if (path.equals("/api/expenses")) {
                     Map<String, Object> body = new LinkedHashMap<>();
                     body.put("expenses", expenseList(service.listAll()));
@@ -99,11 +108,28 @@ public class ApiServer {
                     respond(exchange, 200, body);
                 } else if (path.equals("/api/expenses/range")) {
                     Map<String, String> params = parseQuery(query);
-                    List<Expense> found = service.searchByDateRange(
-                            params.getOrDefault("from", ""), params.getOrDefault("to", ""));
+                    String categoryFilter = params.get("category");
+                    List<Expense> found;
+                    try {
+                        found = service.searchByDateRange(
+                                params.getOrDefault("from", ""), params.getOrDefault("to", ""));
+                    } catch (IllegalArgumentException ex) {
+                        Map<String, Object> err = new LinkedHashMap<>();
+                        err.put("error", ex.getMessage());
+                        respond(exchange, 400, err);
+                        return;
+                    }
+                    if (categoryFilter != null && !categoryFilter.isBlank()) {
+                        List<Expense> filtered = new java.util.ArrayList<>();
+                        for (Expense e : found) {
+                            if (categoryFilter.equalsIgnoreCase(e.getCategory())) filtered.add(e);
+                        }
+                        found = filtered;
+                    }
                     Map<String, Object> body = new LinkedHashMap<>();
                     body.put("from", params.get("from"));
                     body.put("to", params.get("to"));
+                    body.put("category", categoryFilter);
                     body.put("expenses", expenseList(found));
                     respond(exchange, 200, body);
                 } else if (path.equals("/api/categories/ranked")) {
@@ -132,7 +158,8 @@ public class ApiServer {
                             str(body.get("date")),
                             num(body.get("amount")),
                             str(body.get("category")),
-                            str(body.get("description")));
+                            str(body.get("description")),
+                            str(body.get("note")));
                     Expense saved = service.add(candidate);
                     respond(exchange, 201, Map.of("expense", expenseMap(saved), "canUndo", true));
                 } else if (path.equals("/api/undo")) {
@@ -183,6 +210,7 @@ public class ApiServer {
         map.put("amount", e.getAmount());
         map.put("category", e.getCategory());
         map.put("description", e.getDescription());
+        map.put("note", e.getNote() == null ? "" : e.getNote());
         return map;
     }
 

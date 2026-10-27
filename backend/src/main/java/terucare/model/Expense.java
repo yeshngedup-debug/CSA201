@@ -11,13 +11,19 @@ public final class Expense {
     private final double amount;      // Ngultrum (Nu.)
     private final String category;    // one of the 8 fixed categories
     private final String description; // what the money was spent on
+    private final String note;         // optional extra note (backward compatible; default "")
 
     public Expense(String id, String date, double amount, String category, String description) {
+        this(id, date, amount, category, description, "");
+    }
+
+    public Expense(String id, String date, double amount, String category, String description, String note) {
         this.id = id;
         this.date = date;
         this.amount = amount;
         this.category = category;
         this.description = description;
+        this.note = note == null ? "" : note;
     }
 
     public String getId() { return id; }
@@ -25,6 +31,7 @@ public final class Expense {
     public double getAmount() { return amount; }
     public String getCategory() { return category; }
     public String getDescription() { return description; }
+    public String getNote() { return note; }
 
     /** The unique key used to position this expense inside the Binary Search Tree. */
     public String bstKey() { return date + "|" + id; }
