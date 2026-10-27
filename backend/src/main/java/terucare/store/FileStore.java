@@ -66,7 +66,8 @@ public class FileStore {
                             String.valueOf(m.get("date")),
                             ((Number) m.get("amount")).doubleValue(),
                             String.valueOf(m.get("category")),
-                            String.valueOf(m.get("description"))));
+                            String.valueOf(m.get("description")),
+                            m.containsKey("note") ? String.valueOf(m.get("note")) : ""));
                 }
             }
             return out;

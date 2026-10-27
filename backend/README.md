@@ -101,5 +101,11 @@ add, validation failures, delete, undo-both-directions, duplicate ids, range
 search, ranking order, summary math, clear-all, and persistence across
 restart. 24/24 passing.
 
-> JUnit unit tests for the individual structures are a natural next step
-> (the proposal lists JUnit under Technology).
+> JUnit 4 unit tests are in `test/terucare/dsa/` (HashTable, BinarySearchTree,
+> Stack, MergeSort + MergeSortStability) and `test/terucare/service/ExpenseServiceTest.java`.
+> Run with `backend/run-tests.bat` using the JUnit 4 jar from Gradle's wrapper cache
+> (`gradle-8.14.3/lib/junit-4.13.2.jar`). No Maven/Gradle required.
+> Endpoints: `/api/health`, `/api/expenses`, `/api/expenses/range`, `/api/expenses/export`
+> (CSV), `/api/categories/ranked`, `/api/summary`, `/api/stats`, `/api/undo`.
+> Optional note on POST body; category filter on range (`?category=`); case-insensitive
+> description search (`?q=`); all JSON errors consistent.

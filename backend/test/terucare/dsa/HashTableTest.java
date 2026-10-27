@@ -29,7 +29,7 @@ public class HashTableTest {
         HashTable<String, Integer> t = new HashTable<>();
         try { t.put(null, 1); fail("expected IllegalArgumentException"); }
         catch (IllegalArgumentException expected) { /* ok */ }
-        try { t.get(null); fail("expected IllegalArgumentException"); }
+        try { t.get(null); fail("get should also reject null key"); }
         catch (IllegalArgumentException expected) { /* ok */ }
     }
 

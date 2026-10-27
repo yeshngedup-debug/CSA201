@@ -102,8 +102,20 @@ public class ApiServer {
                     body.put("canUndo", stats.get("canUndo"));
                     respond(exchange, 200, body);
                 } else if (path.equals("/api/expenses")) {
+                    Map<String, String> params = parseQuery(query);
+                    List<Expense> all = service.listAll();
+                    String q = params.get("q");
+                    if (q != null && !q.isBlank()) {
+                        String qLower = q.toLowerCase();
+                        List<Expense> filtered = new java.util.ArrayList<>();
+                        for (Expense e : all) {
+                            if (e.getDescription() != null && e.getDescription().toLowerCase().contains(qLower))
+                                filtered.add(e);
+                        }
+                        all = filtered;
+                    }
                     Map<String, Object> body = new LinkedHashMap<>();
-                    body.put("expenses", expenseList(service.listAll()));
+                    body.put("expenses", expenseList(all));
                     body.put("canUndo", service.canUndo());
                     respond(exchange, 200, body);
                 } else if (path.equals("/api/expenses/range")) {
@@ -144,6 +156,23 @@ public class ApiServer {
                         rows.add(row);
                     }
                     respond(exchange, 200, Map.of("categories", rows));
+                } else if (path.equals("/api/expenses/export")) {
+                    List<Expense> expenses = service.listAll();
+                    StringBuilder csv = new StringBuilder();
+                    csv.append("id,date,amount,category,description,note\r\n");
+                    for (Expense e : expenses) {
+                        csv.append(escapeCsv(e.getId())).append(",");
+                        csv.append(escapeCsv(e.getDate())).append(",");
+                        csv.append(escapeCsv(String.format("%.2f", e.getAmount()))).append(",");
+                        csv.append(escapeCsv(e.getCategory())).append(",");
+                        csv.append(escapeCsv(e.getDescription())).append(",");
+                        csv.append(escapeCsv(e.getNote() == null ? "" : e.getNote())).append("\r\n");
+                    }
+                    byte[] bytes = csv.toString().getBytes(StandardCharsets.UTF_8);
+                    exchange.getResponseHeaders().add("Content-Type", "text/csv; charset=utf-8");
+                    exchange.getResponseHeaders().add("Content-Disposition", "attachment; filename=expenses.csv");
+                    exchange.sendResponseHeaders(200, bytes.length);
+                    try (OutputStream os = exchange.getResponseBody()) { os.write(bytes); }
                 } else if (path.equals("/api/summary")) {
                     respond(exchange, 200, service.summary());
                 } else {
@@ -251,6 +280,14 @@ public class ApiServer {
             }
         }
         return Double.NaN;
+    }
+
+    private static String escapeCsv(String s) {
+        if (s == null) return "";
+        if (s.contains(",") || s.contains("\"") || s.contains("\n") || s.contains("\r")) {
+            return "\"" + s.replace("\"", "\"\"") + "\"";
+        }
+        return s;
     }
 
     private static String safeMessage(Exception e) {

@@ -17,6 +17,7 @@ export interface ApiExpense {
   amount: number;
   category: string;
   description: string;
+  note?: string;
 }
 
 /** Error carrying the backend's message, ready to show in a toast. */
@@ -69,6 +70,28 @@ export interface UndoResponse {
 /** All expenses, newest first (reverse in-order traversal of the backend BST). */
 export function fetchExpenses(): Promise<ExpenseListResponse> {
   return request<ExpenseListResponse>("/expenses");
+}
+
+export function fetchExpensesRange(from: string, to: string, category?: string): Promise<{ expenses: ApiExpense[]; from?: string; to?: string; category?: string }> {
+  const qs = new URLSearchParams();
+  if (from) qs.append("from", from);
+  if (to) qs.append("to", to);
+  if (category) qs.append("category", category);
+  const q = qs.toString() ? "?" + qs.toString() : "";
+  return request(`/expenses/range${q}`);
+}
+
+export function fetchStats(): Promise<Record<string, unknown>> {
+  return request("/stats");
+}
+
+export function fetchExportCsv(): Promise<string> {
+  return fetch(`${API_BASE}/expenses/export`, { headers: { "Accept": "text/csv" } })
+    .then(async res => { if (!res.ok) throw new ApiError("Export failed"); return res.text(); });
+}
+
+export function searchExpenses(q: string): Promise<ExpenseListResponse> {
+  return request<ExpenseListResponse>(`/expenses?q=${encodeURIComponent(q)}`);
 }
 
 /** Validate + add on the Java side; returns the stored expense (with server id). */
