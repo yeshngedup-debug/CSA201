@@ -3,6 +3,7 @@
   "version": "1.0.0",
   "description": "Expense tracking dashboard built with React, Vite, and Tailwind CSS",
   "type": "module",
+  "packageManager": "pnpm@10.34.9",
   "scripts": {
     "dev": "vite",
     "build": "vite build",
