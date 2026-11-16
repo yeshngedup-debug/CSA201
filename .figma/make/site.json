@@ -1,0 +1,10 @@
+{
+  "description": "FinTrack - Expense Tracking Dashboard",
+  "robots": {
+    "index": false
+  },
+  "accessibility": {
+    "addBypassLinks": false,
+    "ignoreReducedMotion": false
+  }
+}
