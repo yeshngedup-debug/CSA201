@@ -2,7 +2,7 @@
 setlocal EnableExtensions
 
 rem ==========================================================================
-rem  FinTrack / Teru Care - full stack launcher
+rem  Teru Care / Teru Care - full stack launcher
 rem
 rem  Starts everything needed to use the app:
 rem    1. checks Java + Node.js are installed
@@ -21,7 +21,7 @@ rem  Services that are already running are detected and reused instead of
 rem  being started twice. Use stop.bat to shut the whole stack down.
 rem ==========================================================================
 
-title FinTrack launcher
+title Teru Care launcher
 
 rem Capture our own folder BEFORE the argument loop: `shift` also moves %0,
 rem which would turn %~dp0 into the drive root and send every later path to
@@ -47,7 +47,7 @@ goto :parse_args
 :args_done
 
 echo ==========================================================
-echo   FinTrack - Expense Tracker  (Teru Care, CSA201)
+echo   Teru Care - Expense Tracker  (Teru Care, CSA201)
 echo ==========================================================
 echo.
 
@@ -99,7 +99,7 @@ rem ---------- 3. compile the backend -------------------------------------
 
 echo [..] Compiling the Java backend...
 if not exist "%ROOT%backend\out" mkdir "%ROOT%backend\out"
-set "SOURCE_LIST=%TEMP%\fintrack-sources.txt"
+set "SOURCE_LIST=%TEMP%\Teru Care-sources.txt"
 dir /s /b "%ROOT%backend\src\*.java" > "%SOURCE_LIST%"
 javac -encoding UTF-8 -d "%ROOT%backend\out" @"%SOURCE_LIST%"
 set "JAVAC_RESULT=%ERRORLEVEL%"
@@ -137,7 +137,7 @@ if "%PROBE_OK%"=="1" (
 ) else (
     echo [..] Starting Vite dev server on port %APP_PORT%...
     pushd "%ROOT%"
-    start "FinTrack Dev Server :%APP_PORT%" cmd /k "npm run dev -- --port %APP_PORT% --strictPort"
+    start "Teru Care Dev Server :%APP_PORT%" cmd /k "npm run dev -- --port %APP_PORT% --strictPort"
     popd
     call :wait_http "%APP_URL%" "Dev server"
     if "%WAIT_OK%"=="0" (
@@ -150,7 +150,7 @@ rem ---------- 6. ready ----------------------------------------------------
 
 echo.
 echo ==========================================================
-echo   FinTrack is running
+echo   Teru Care is running
 echo ----------------------------------------------------------
 echo   App      : %APP_URL%
 echo   API      : http://localhost:%API_PORT%/api

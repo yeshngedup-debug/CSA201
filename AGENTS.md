@@ -1,4 +1,4 @@
-# FinTrack - Expense Tracker
+# Teru Care - Expense Tracker
 
 A React + Vite + Tailwind CSS expense tracking dashboard application backed by a **Java REST API** (Teru Care, CSA201 project).
 
@@ -50,7 +50,9 @@ A Vite development server is **already running** on `$PORT` (default 8443). You 
 - `src/main.tsx` - React entrypoint; imports `src/index.css` and mounts `src/App.tsx` into the `#root` element
 - `src/App.tsx` - Primary application component with dashboard, transactions, and add expense features
 - `src/api.ts` - HTTP client for the Java backend (all add/delete/undo/clear calls)
+- `src/demoData.ts` - sample rows for the clearly-labelled read-only demo mode (used only when the API is unreachable)
 - `backend/` - Java REST API (DSA: Hash Table, BST, Stack, Merge Sort) — see `backend/README.md`
+- `DEPLOY.md` - hosting the Java API publicly and pointing Vercel at it with `VITE_API_URL`
 - `src/index.css` - Global CSS entrypoint with Tailwind CSS v4 and custom theme tokens
 - `index.html` - Vite HTML shell containing the `#root` element and loading `src/main.tsx`
 - `package.json` - Project dependencies and build, dev, preview, and formatting scripts
@@ -95,3 +97,17 @@ TypeScript version is newest in the npx cache):
 ```
 .\node_modules\.bin\tsc.cmd --noEmit
 ```
+
+## Deployment
+
+Vercel hosts **only** the static Vite build; the Java API has to run somewhere
+else (Railway, Render, Fly.io, any VPS with a JDK). Full walkthrough in
+`DEPLOY.md`.
+
+- Set `VITE_API_URL` (with the `/api` suffix) in the Vercel project env vars,
+  then **redeploy** — Vite inlines it at build time.
+- Without it the bundle falls back to `http://localhost:8090/api`, so the
+  deployed site shows the red "Cannot reach the Teru Care API" banner and offers
+  a read-only demo preview instead of pretending you have no expenses.
+- CORS is an explicit allowlist in `server/ApiServer.java`; extend it with
+  `TERU_ALLOWED_ORIGINS` for custom domains.

@@ -1,12 +1,12 @@
 /**
  * Teru Care Java backend client.
  *
- * All data now lives in the Java backend (BST + HashTable + Stack + MergeSort)
+ * All data lives in the Java backend (BST + HashTable + Stack + MergeSort)
  * which persists to backend/data/expenses.json. The React app is purely a
  * view: every add / delete / undo / clear goes through these calls.
  *
- * The backend must be running:  backend\run.bat   (listens on port 8090)
- * Override the URL with VITE_API_URL when deploying elsewhere.
+ * The backend must be running: backend\run.bat (listens on port 8090)
+ * Override the URL with VITE_API_URL when running against a different host.
  */
 
 const API_BASE: string = import.meta.env.VITE_API_URL ?? "http://localhost:8090/api";
@@ -20,7 +20,6 @@ export interface ApiExpense {
   note?: string;
 }
 
-/** Error carrying the backend's message, ready to show in a toast. */
 export class ApiError extends Error {
   constructor(message: string) {
     super(message);
@@ -38,14 +37,8 @@ async function request<T>(path: string, init?: RequestInit): Promise<T> {
   } catch {
     throw new ApiError("Cannot reach the Java backend — is it running? Start it with backend\\run.bat");
   }
-
   let body: unknown = null;
-  try {
-    body = await res.json();
-  } catch {
-    // 204 responses arrive with an empty body
-  }
-
+  try { body = await res.json(); } catch { /* 204 responses */ }
   if (!res.ok) {
     const message =
       body && typeof body === "object" && "error" in body && typeof (body as { error: unknown }).error === "string"
@@ -67,7 +60,6 @@ export interface UndoResponse {
   canUndo: boolean;
 }
 
-/** All expenses, newest first (reverse in-order traversal of the backend BST). */
 export function fetchExpenses(): Promise<ExpenseListResponse> {
   return request<ExpenseListResponse>("/expenses");
 }
@@ -94,7 +86,6 @@ export function searchExpenses(q: string): Promise<ExpenseListResponse> {
   return request<ExpenseListResponse>(`/expenses?q=${encodeURIComponent(q)}`);
 }
 
-/** Validate + add on the Java side; returns the stored expense (with server id). */
 export function addExpense(expense: Omit<ApiExpense, "id"> & { id?: string }): Promise<ApiExpense> {
   return request<{ expense: ApiExpense }>("/expenses", {
     method: "POST",
@@ -103,12 +94,10 @@ export function addExpense(expense: Omit<ApiExpense, "id"> & { id?: string }): P
 }
 
 export function deleteExpense(id: string): Promise<ApiExpense> {
-  return request<{ expense: ApiExpense }>(`/expenses/${encodeURIComponent(id)}`, {
-    method: "DELETE",
-  }).then(r => r.expense);
+  return request<{ expense: ApiExpense }>(`/expenses/${encodeURIComponent(id)}`, { method: "DELETE" })
+    .then(r => r.expense);
 }
 
-/** Pop the backend undo Stack: removes the last add, or restores the last delete. */
 export function undoLast(): Promise<UndoResponse> {
   return request<UndoResponse>("/undo", { method: "POST" });
 }

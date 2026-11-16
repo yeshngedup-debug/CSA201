@@ -2,7 +2,7 @@
 setlocal EnableExtensions
 
 rem ==========================================================================
-rem  FinTrack / Teru Care - stop the whole stack
+rem  Teru Care / Teru Care - stop the whole stack
 rem
 rem  Closes the backend API and the Vite dev server that start.bat launched.
 rem  Two mechanisms are used, in order:
@@ -12,18 +12,18 @@ rem       (the API must identify itself as "Teru Care" before we touch it, so
 rem        an unrelated program on the same port is never killed)
 rem ==========================================================================
 
-title FinTrack stopper
+title Teru Care stopper
 
 set "API_PORT=8090"
 set "APP_PORT=8443"
 
 echo ==========================================================
-echo   Stopping FinTrack
+echo   Stopping Teru Care
 echo ==========================================================
 echo.
 
 call :kill_window "Teru Care API"
-call :kill_window "FinTrack Dev Server"
+call :kill_window "Teru Care Dev Server"
 
 rem Give the processes a moment to release their ports.
 timeout /t 2 /nobreak >nul

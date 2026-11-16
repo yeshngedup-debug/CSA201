@@ -26,6 +26,11 @@ interface Toast {
   type: "success" | "error" | "info";
 }
 
+interface OfflineBanner {
+  show: boolean;
+  message: string;
+}
+
 interface Insight {
   icon: string;
   variant: "mint" | "warning" | "neutral";
@@ -197,10 +202,10 @@ function Sidebar({ view, setView, onExport, onClear, onUndo, canUndo }: {
     <aside className="sidebar">
       <div className="flex items-center gap-2.5 self-start px-1.5">
         <span className="brand-mark">
-          <img src="/logo.png" alt="FinTrack" className="w-[34px] h-[34px] object-contain" />
+          <img src="/logo.png" alt="Teru Care" className="w-[34px] h-[34px] object-contain" />
         </span>
         <span className="brand-word text-[19px] font-bold tracking-[-0.9px] text-[#f4f9ff]" style={{ fontFamily: "var(--font-display)" }}>
-          FinTrack<span className="text-mint">.</span>
+          Teru Care<span className="text-mint">.</span>
         </span>
       </div>
 
@@ -350,6 +355,8 @@ export default function App() {
   const [filterCat, setFilterCat] = useState<Category | "All">("All");
   const [search, setSearch] = useState("");
   const [toasts, setToasts] = useState<Toast[]>([]);
+  const [apiOffline, setApiOffline] = useState(false);
+  const [apiError, setApiError] = useState("");
 
   // Load the expense list from the Java backend on mount.
   useEffect(() => {
@@ -359,6 +366,8 @@ export default function App() {
         setCanUndo(res.canUndo);
       })
       .catch((err: Error) => {
+        setApiOffline(true);
+        setApiError(err.message);
         setToasts(t => [...t, { id: uid(), message: err.message, type: "error" }]);
       });
   }, []);
@@ -368,9 +377,12 @@ export default function App() {
       .then(saved => {
         setExpenses(prev => [fromApi(saved), ...prev]);
         setCanUndo(true);
+        setApiOffline(false); // successful call → API is reachable
         setToasts(t => [...t, { id: uid(), message: `${saved.description} — ${formatAmount(saved.amount)} added`, type: "success" }]);
       })
       .catch((err: Error) => {
+        setApiOffline(true);
+        setApiError(err.message);
         setToasts(t => [...t, { id: uid(), message: err.message, type: "error" }]);
       });
   }, []);
@@ -414,7 +426,7 @@ export default function App() {
     const blob = new Blob([header + rows], { type: "text/csv" });
     const url = URL.createObjectURL(blob);
     const a = document.createElement("a");
-    a.href = url; a.download = "fintrack-export.csv"; a.click();
+    a.href = url; a.download = "teru-care-export.csv"; a.click();
     URL.revokeObjectURL(url);
     setToasts(t => [...t, { id: uid(), message: "CSV exported", type: "success" }]);
   }, [expenses]);
@@ -520,8 +532,8 @@ export default function App() {
       {/* Mobile top bar */}
       <div className="sticky top-0 z-30 flex items-center justify-between border-b border-line bg-[#091323f5] px-4 py-3 backdrop-blur-xl sm:hidden">
         <div className="flex items-center gap-2.5">
-          <span className="brand-mark h-8! w-8! flex-none! rounded-[9px]"><img src="/logo.png" alt="FinTrack" className="w-full h-full object-contain" /></span>
-          <span className="text-[17px] font-bold tracking-[-0.9px] text-[#f4f9ff]" style={{ fontFamily: "var(--font-display)" }}>FinTrack<span className="text-mint">.</span></span>
+          <span className="brand-mark h-8! w-8! flex-none! rounded-[9px]"><img src="/logo.png" alt="Teru Care" className="w-full h-full object-contain" /></span>
+          <span className="text-[17px] font-bold tracking-[-0.9px] text-[#f4f9ff]" style={{ fontFamily: "var(--font-display)" }}>Teru Care<span className="text-mint">.</span></span>
         </div>
         <button onClick={() => setShowModal(true)} className="grid h-9 w-9 place-items-center rounded-[9px] text-[#09231f]" style={{ background: "linear-gradient(135deg,#93fbd9,#68e6c3)" }} aria-label="Add expense">
           <i className="bi bi-plus-lg" aria-hidden="true" />
@@ -534,7 +546,7 @@ export default function App() {
           <div className="min-w-0">
             <p className="flex items-center gap-2 text-[10px] font-bold uppercase tracking-[1.8px] text-[#7dbaa9]">
               <span className="live-dot" aria-hidden="true" />
-              FinTrack <span className="text-[#465b76]">/</span> {view === "dashboard" ? "Overview" : "Ledger"}
+              Teru Care <span className="text-[#465b76]">/</span> {view === "dashboard" ? "Overview" : "Ledger"}
             </p>
             <h1 className="mt-2.5 text-[clamp(26px,2.55vw,38px)] font-semibold leading-[1.16] tracking-[-1.35px] text-[#f0f5fd]">
               {view === "dashboard" ? "Track every expense." : "Every rupee,"}
@@ -562,15 +574,27 @@ export default function App() {
         {view === "dashboard" && (
           <div className="mx-auto max-w-[1500px]">
             {expenses.length === 0 ? (
-              <div className="panel flex min-h-[320px] flex-col items-center justify-center text-center">
-                <span className="stat-icon h-12 w-12 text-xl"><i className="bi bi-wallet2" aria-hidden="true" /></span>
-                <h3 className="mt-4 text-[18px] font-semibold text-[#e1eaf6]">No expenses yet</h3>
-                <p className="mt-1 text-[12px] text-[#8094ae]">Add your first expense and the dashboard will come to life.</p>
-                <button onClick={() => setShowModal(true)} className="mt-5 inline-flex h-10 items-center gap-2 rounded-[9px] px-4 text-[12px] font-bold text-[#09231f]" style={{ background: "linear-gradient(135deg,#93fbd9,#68e6c3)" }}>
-                  <i className="bi bi-plus-lg" aria-hidden="true" /> Add first expense
-                </button>
-              </div>
-            ) : (
+              apiOffline ? (
+                <div className="panel flex min-h-[280px] flex-col items-center justify-center gap-3 px-6 text-center border-amber-400/20 bg-amber-950/30">
+                  <i className="bi bi-plug-fill text-[26px] text-amber-400" aria-hidden="true" />
+                  <h3 className="text-[17px] font-semibold text-[#e1eaf6]">Can&apos;t reach the backend</h3>
+                  <p className="text-[12px] text-[#8d9eb7] max-w-md leading-relaxed">
+                    The dashboard is empty because the Java API is not responding at{" "}
+                    <code className="rounded bg-[#0b1829] px-1.5 py-0.5 font-mono text-[11px] text-amber-200">localhost:8090</code>.
+                    Start it with{" "}<code className="rounded bg-[#0b1829] px-1.5 py-0.5 font-mono text-[11px] text-amber-200">backend\run.bat</code>.
+                  </p>
+                </div>
+              ) : (
+                <div className="panel flex min-h-[320px] flex-col items-center justify-center text-center">
+              <span className="stat-icon h-12 w-12 text-xl"><i className="bi bi-wallet2" aria-hidden="true" /></span>
+              <h3 className="mt-4 text-[18px] font-semibold text-[#e1eaf6]">No expenses yet</h3>
+              <p className="mt-1 text-[12px] text-[#8094ae]">Add your first expense and the dashboard will come to life.</p>
+              <button onClick={() => setShowModal(true)} className="mt-5 inline-flex h-10 items-center gap-2 rounded-[9px] px-4 text-[12px] font-bold text-[#09231f]" style={{ background: "linear-gradient(135deg,#93fbd9,#68e6c3)" }}>
+                <i className="bi bi-plus-lg" aria-hidden="true" /> Add first expense
+              </button>
+            </div>
+          )
+        ) : (
               <>
                 {/* Stat grid */}
                 <div className="mb-4 grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-[1.22fr_1fr_1fr_1fr]">
@@ -724,7 +748,7 @@ export default function App() {
 
                 {/* Footer */}
                 <footer className="mt-9 flex flex-wrap items-center justify-between gap-3 pb-2 pt-3 text-[10px] text-[#61738e]">
-                  <span>© 2026 FinTrack · Teru Care — CSA201 Group 1 · <strong className="font-semibold text-[#7d92ad]">Ctrl+N</strong> new · <strong className="font-semibold text-[#7d92ad]">Ctrl+Z</strong> undo · <strong className="font-semibold text-[#7d92ad]">Esc</strong> close</span>
+                  <span>© 2026 Teru Care · Teru Care — CSA201 Group 1 · <strong className="font-semibold text-[#7d92ad]">Ctrl+N</strong> new · <strong className="font-semibold text-[#7d92ad]">Ctrl+Z</strong> undo · <strong className="font-semibold text-[#7d92ad]">Esc</strong> close</span>
                   <span className="flex items-center gap-1.5">
                     <span className="live-dot h-[5px]! w-[5px]!" aria-hidden="true" /> Java backend live on :8090
                   </span>
@@ -808,7 +832,7 @@ export default function App() {
             </div>
 
             <footer className="mt-9 flex flex-wrap items-center justify-between gap-3 pb-2 pt-3 text-[10px] text-[#61738e]">
-              <span>© 2026 FinTrack · Teru Care — CSA201 Group 1 · <strong className="font-semibold text-[#7d92ad]">Ctrl+N</strong> new · <strong className="font-semibold text-[#7d92ad]">Ctrl+Z</strong> undo · <strong className="font-semibold text-[#7d92ad]">Esc</strong> close</span>
+              <span>© 2026 Teru Care · Teru Care — CSA201 Group 1 · <strong className="font-semibold text-[#7d92ad]">Ctrl+N</strong> new · <strong className="font-semibold text-[#7d92ad]">Ctrl+Z</strong> undo · <strong className="font-semibold text-[#7d92ad]">Esc</strong> close</span>
               <span className="flex items-center gap-1.5">
                 <span className="live-dot h-[5px]! w-[5px]!" aria-hidden="true" /> Java backend live on :8090
               </span>

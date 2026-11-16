@@ -22,10 +22,18 @@ java -cp out terucare.Main
 - API base: `http://localhost:8090/api`
 - Storage:  `backend/data/expenses.json` (created and seeded on first run)
 - Stop: Ctrl+C in the server window
-- Port override: `java -cp out terucare.Main 9000` or env var `TERU_PORT`
+- Port override: `java -cp out terucare.Main 9000`, env var `TERU_PORT`, or `PORT`
+  (the standard variable injected by Railway/Render/Fly/Heroku)
+- Data directory override: `TERU_DATA_DIR` (point at a mounted volume on hosts
+  with an ephemeral filesystem)
+- CORS allowlist override: `TERU_ALLOWED_ORIGINS` (comma-separated)
 
-The React frontend (`src/api.ts`) calls `http://localhost:8090/api` — start this
-backend **before** using the app. CORS is enabled for the Vite dev server.
+The React frontend (`src/api.ts`) calls `VITE_API_URL` when set, otherwise
+`http://localhost:8090/api` — start this backend **before** using the app. CORS
+is approved for the Vite dev server on any localhost port, the deployed frontend
+(`https://csa-201-ruddy.vercel.app`), this project's Vercel preview URLs, and
+anything listed in `TERU_ALLOWED_ORIGINS`. See `DEPLOY.md` for hosting the API
+with a public HTTPS URL.
 
 ## Architecture (proposal section 3.5)
 
