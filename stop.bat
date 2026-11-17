@@ -4,7 +4,8 @@ setlocal EnableExtensions
 rem ==========================================================================
 rem  Teru Care / Teru Care - stop the whole stack
 rem
-rem  Closes the backend API and the Vite dev server that start.bat launched.
+rem  Closes the backend API, the Vite dev server and the desktop GUI that
+rem  start.bat launched.
 rem  Two mechanisms are used, in order:
 rem    1. kill the console windows by their titles (exact, safe)
 rem    2. if a port is still occupied by *our* app, kill the process holding it
@@ -24,6 +25,8 @@ echo.
 
 call :kill_window "Teru Care API"
 call :kill_window "Teru Care Dev Server"
+call :kill_window "Teru Care Desktop GUI"
+call :kill_window "Teru Care - Expense Tracker"
 
 rem Give the processes a moment to release their ports.
 timeout /t 2 /nobreak >nul

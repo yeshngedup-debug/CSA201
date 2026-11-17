@@ -49,15 +49,18 @@ public class FileStore {
     }
 
     /**
-     * Load all expenses from disk. Returns the seed list when the file is
-     * missing or unreadable, so the app always starts with usable data.
+     * Load all expenses from disk. The app seeds the default demo file on the
+     * first real backend startup, but short-lived test stores and temporary files
+     * should start empty instead of inheriting demo data.
      */
     public List<Expense> load() {
-        if (!Files.exists(file)) return seedData();
+        if (!Files.exists(file)) {
+            return shouldSeedDemoData() ? seedData() : new ArrayList<>();
+        }
         try {
             String text = Files.readString(file, StandardCharsets.UTF_8);
             Object parsed = Json.parse(text);
-            if (!(parsed instanceof List<?> list)) return seedData();
+            if (!(parsed instanceof List<?> list)) return shouldSeedDemoData() ? seedData() : new ArrayList<>();
             List<Expense> out = new ArrayList<>();
             for (Object item : list) {
                 if (item instanceof Map<?, ?> m) {
@@ -83,8 +86,13 @@ public class FileStore {
             } catch (IOException moveError) {
                 System.err.println("[FileStore] Could not read " + file + " (" + e.getMessage() + ")");
             }
-            return seedData();
+            return shouldSeedDemoData() ? seedData() : new ArrayList<>();
         }
+    }
+
+    private boolean shouldSeedDemoData() {
+        String name = file.getFileName() == null ? "" : file.getFileName().toString();
+        return "expenses.json".equals(name) && (file.getParent() == null || "data".equals(file.getParent().getFileName().toString()));
     }
 
     /** Write the full expense list to disk (atomic: temp file + move). */
@@ -97,6 +105,9 @@ public class FileStore {
             row.put("amount", e.getAmount());
             row.put("category", e.getCategory());
             row.put("description", e.getDescription());
+            if (e.getNote() != null && !e.getNote().isBlank()) {
+                row.put("note", e.getNote());
+            }
             rows.add(row);
         }
         String json = Json.write(rows);

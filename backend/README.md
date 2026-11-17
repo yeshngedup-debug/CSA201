@@ -32,8 +32,9 @@ The React frontend (`src/api.ts`) calls `VITE_API_URL` when set, otherwise
 `http://localhost:8090/api` — start this backend **before** using the app. CORS
 is approved for the Vite dev server on any localhost port, the deployed frontend
 (`https://csa-201-ruddy.vercel.app`), this project's Vercel preview URLs, and
-anything listed in `TERU_ALLOWED_ORIGINS`. See `DEPLOY.md` for hosting the API
-with a public HTTPS URL.
+anything listed in `TERU_ALLOWED_ORIGINS`. To host the API publicly, deploy it to
+any VPS / PaaS with a JDK, set `TERU_ALLOWED_ORIGINS` for your frontend domain,
+then set `VITE_API_URL` (with `/api` suffix) on the frontend host and redeploy.
 
 ## Architecture (proposal section 3.5)
 

@@ -1,4 +1,4 @@
-﻿package terucare.dsa;
+package terucare.dsa;
 
 import org.junit.Test;
 import static org.junit.Assert.*;
@@ -6,7 +6,7 @@ import static org.junit.Assert.*;
 public class StackTest {
 
     @Test
-    void pushPopPeekLIFO() {
+    public void pushPopPeekLIFO() {
         Stack<String> s = new Stack<>();
         s.push("a");
         s.push("b");
@@ -17,14 +17,14 @@ public class StackTest {
     }
 
     @Test
-    void emptyPopReturnsNull() {
+    public void emptyPopReturnsNull() {
         Stack<String> s = new Stack<>();
         assertNull(s.pop());
         assertNull(s.peek());
     }
 
     @Test
-    void clear() {
+    public void clear() {
         Stack<String> s = new Stack<>();
         s.push("a");
         s.clear();
@@ -33,7 +33,7 @@ public class StackTest {
     }
 
     @Test
-    void sizeMatches() {
+    public void sizeMatches() {
         Stack<Integer> s = new Stack<>();
         assertEquals(0, s.size());
         s.push(1);

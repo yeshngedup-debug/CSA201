@@ -1,4 +1,4 @@
-﻿package terucare.dsa;
+package terucare.dsa;
 
 import org.junit.Test;
 import static org.junit.Assert.*;
@@ -7,25 +7,25 @@ import static org.junit.Assert.*;
 public class HashTableTest {
 
     @Test
-    void putAndGet() {
+    public void putAndGet() {
         HashTable<String, Integer> t = new HashTable<>();
         assertNull(t.put("a", 1));
-        assertEquals(1, t.get("a"));
+        assertEquals(Integer.valueOf(1), t.get("a"));
         assertEquals(1, t.size());
     }
 
     @Test
-    void overwriteReturnsOldValue() {
+    public void overwriteReturnsOldValue() {
         HashTable<String, Integer> t = new HashTable<>();
         t.put("a", 1);
         Integer old = t.put("a", 2);
-        assertEquals(1, old);
-        assertEquals(2, t.get("a"));
+        assertEquals(Integer.valueOf(1), old);
+        assertEquals(Integer.valueOf(2), t.get("a"));
         assertEquals(1, t.size());
     }
 
     @Test
-    void nullKeyRejected() {
+    public void nullKeyRejected() {
         HashTable<String, Integer> t = new HashTable<>();
         try { t.put(null, 1); fail("expected IllegalArgumentException"); }
         catch (IllegalArgumentException expected) { /* ok */ }
@@ -34,23 +34,23 @@ public class HashTableTest {
     }
 
     @Test
-    void removeReturnsValueAndDecrementsSize() {
+    public void removeReturnsValueAndDecrementsSize() {
         HashTable<String, Integer> t = new HashTable<>();
         t.put("a", 1);
         t.put("b", 2);
-        assertEquals(1, t.remove("a"));
+        assertEquals(Integer.valueOf(1), t.remove("a"));
         assertNull(t.get("a"));
         assertEquals(1, t.size());
     }
 
     @Test
-    void removeMissingReturnsNull() {
+    public void removeMissingReturnsNull() {
         HashTable<String, Integer> t = new HashTable<>();
         assertNull(t.remove("missing"));
     }
 
     @Test
-    void resizePastLoadFactor() {
+    public void resizePastLoadFactor() {
         HashTable<Integer, String> t = new HashTable<>();
         // DEFAULT_CAPACITY = 16, MAX_LOAD_FACTOR = 0.75 -> resize at 13 elements
         for (int i = 0; i < 20; i++) {
@@ -63,7 +63,7 @@ public class HashTableTest {
     }
 
     @Test
-    void clearRemovesAll() {
+    public void clearRemovesAll() {
         HashTable<String, Integer> t = new HashTable<>();
         t.put("a", 1);
         t.put("b", 2);
@@ -74,7 +74,7 @@ public class HashTableTest {
     }
 
     @Test
-    void keysAndValuesContainAllEntries() {
+    public void keysAndValuesContainAllEntries() {
         HashTable<String, Integer> t = new HashTable<>();
         t.put("a", 1);
         t.put("b", 2);
@@ -86,7 +86,7 @@ public class HashTableTest {
     }
 
     @Test
-    void containsKey() {
+    public void containsKey() {
         HashTable<String, Integer> t = new HashTable<>();
         assertFalse(t.containsKey("x"));
         t.put("x", 99);

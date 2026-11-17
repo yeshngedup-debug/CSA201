@@ -72,7 +72,7 @@ public class HashTable<K, V> {
 
     /** Look up a value by key. Returns null when the key is absent. */
     public V get(K key) {
-        if (key == null) return null;
+        if (key == null) throw new IllegalArgumentException("HashTable key cannot be null");
         int index = indexOf(key);
         for (Entry<K, V> e = table[index]; e != null; e = e.next) {
             if (e.key.equals(key)) return e.value;
@@ -81,12 +81,13 @@ public class HashTable<K, V> {
     }
 
     public boolean containsKey(K key) {
+        if (key == null) throw new IllegalArgumentException("HashTable key cannot be null");
         return get(key) != null;
     }
 
     /** Remove a key. Returns the removed value, or null when absent. */
     public V remove(K key) {
-        if (key == null) return null;
+        if (key == null) throw new IllegalArgumentException("HashTable key cannot be null");
         int index = indexOf(key);
         Entry<K, V> prev = null;
         for (Entry<K, V> e = table[index]; e != null; prev = e, e = e.next) {

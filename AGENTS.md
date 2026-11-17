@@ -34,6 +34,7 @@ backend\run.bat
 ```
 
 - API: `http://localhost:8090/api` (health check: `/api/health`)
+- The Vite dev server and preview proxy `/api` to the backend (`vite.config.ts`), so the app calls same-origin `/api`; the backend must still be running on 8090. `VITE_API_URL` still overrides the base for production.
 - Persists to `backend/data/expenses.json`
 - Hand-implemented DSA: HashTable, BinarySearchTree, Stack, MergeSort (see `backend/README.md`)
 - Frontend calls it from `src/api.ts`; CORS is already enabled
@@ -48,11 +49,16 @@ A Vite development server is **already running** on `$PORT` (default 8443). You 
 ## Project Structure
 
 - `src/main.tsx` - React entrypoint; imports `src/index.css` and mounts `src/App.tsx` into the `#root` element
-- `src/App.tsx` - Primary application component with dashboard, transactions, and add expense features
+- `src/App.tsx` - App shell: state, API wiring, keyboard shortcuts, view switching
+- `src/types.ts` - Shared TypeScript types (`Expense`, `Toast`)
+- `src/lib.ts` - Constants, formatters, `categoryMarkStyle`, `today`, `uid`
 - `src/api.ts` - HTTP client for the Java backend (all add/delete/undo/clear calls)
-- `src/demoData.ts` - sample rows for the clearly-labelled read-only demo mode (used only when the API is unreachable)
+- `src/components/` - Reusable UI: `Sidebar`, `AddExpenseModal`, `Toast`, `Footer`, `StatCard`, `InsightCard`, `Charts`
+- `src/views/` - Full-page views: `DashboardView`, `TransactionsView`
 - `backend/` - Java REST API (DSA: Hash Table, BST, Stack, Merge Sort) — see `backend/README.md`
-- `DEPLOY.md` - hosting the Java API publicly and pointing Vercel at it with `VITE_API_URL`
+- `backend/src/main/java/terucare/gui/` - desktop GUI prototype (WIP)
+- `docs/` - Project documents (CSA201 brief, superpowers plans/specs)
+- `floorplan/` - Interactive architecture map of the codebase (`floorplan/index.html`)
 - `src/index.css` - Global CSS entrypoint with Tailwind CSS v4 and custom theme tokens
 - `index.html` - Vite HTML shell containing the `#root` element and loading `src/main.tsx`
 - `package.json` - Project dependencies and build, dev, preview, and formatting scripts
@@ -101,13 +107,12 @@ TypeScript version is newest in the npx cache):
 ## Deployment
 
 Vercel hosts **only** the static Vite build; the Java API has to run somewhere
-else (Railway, Render, Fly.io, any VPS with a JDK). Full walkthrough in
-`DEPLOY.md`.
+else (Railway, Render, Fly.io, any VPS with a JDK).
 
 - Set `VITE_API_URL` (with the `/api` suffix) in the Vercel project env vars,
   then **redeploy** — Vite inlines it at build time.
 - Without it the bundle falls back to `http://localhost:8090/api`, so the
-  deployed site shows the red "Cannot reach the Teru Care API" banner and offers
-  a read-only demo preview instead of pretending you have no expenses.
+  deployed site shows an empty "Can't reach the backend" state instead of any
+  data.
 - CORS is an explicit allowlist in `server/ApiServer.java`; extend it with
   `TERU_ALLOWED_ORIGINS` for custom domains.

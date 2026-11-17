@@ -1,4 +1,4 @@
-﻿package terucare.dsa;
+package terucare.dsa;
 
 import org.junit.Test;
 import static org.junit.Assert.*;
@@ -7,7 +7,7 @@ import static org.junit.Assert.*;
 public class BinarySearchTreeTest {
 
     @Test
-    void insertAndFind() {
+    public void insertAndFind() {
         BinarySearchTree<String> t = new BinarySearchTree<>();
         assertTrue(t.insert("b", "B"));
         assertTrue(t.insert("a", "A"));
@@ -19,7 +19,7 @@ public class BinarySearchTreeTest {
     }
 
     @Test
-    void duplicateKeyIgnored() {
+    public void duplicateKeyIgnored() {
         BinarySearchTree<String> t = new BinarySearchTree<>();
         assertTrue(t.insert("a", "A"));
         assertFalse(t.insert("a", "AA"));
@@ -28,7 +28,7 @@ public class BinarySearchTreeTest {
     }
 
     @Test
-    void deleteLeaf() {
+    public void deleteLeaf() {
         BinarySearchTree<String> t = new BinarySearchTree<>();
         t.insert("a", "A");
         t.insert("b", "B");
@@ -40,7 +40,7 @@ public class BinarySearchTreeTest {
     }
 
     @Test
-    void deleteOneChild() {
+    public void deleteOneChild() {
         BinarySearchTree<String> t = new BinarySearchTree<>();
         t.insert("b", "B");
         t.insert("a", "A");
@@ -50,7 +50,7 @@ public class BinarySearchTreeTest {
     }
 
     @Test
-    void deleteTwoChildren() {
+    public void deleteTwoChildren() {
         BinarySearchTree<String> t = new BinarySearchTree<>();
         t.insert("b", "B");
         t.insert("a", "A");
@@ -65,13 +65,13 @@ public class BinarySearchTreeTest {
     }
 
     @Test
-    void deleteMissingReturnsNull() {
+    public void deleteMissingReturnsNull() {
         BinarySearchTree<String> t = new BinarySearchTree<>();
         assertNull(t.delete("missing"));
     }
 
     @Test
-    void inOrderSorted() {
+    public void inOrderSorted() {
         BinarySearchTree<String> t = new BinarySearchTree<>();
         String[] keys = {"f", "b", "a", "d", "c", "e", "g", "i", "h"};
         for (String k : keys) t.insert(k, k);
@@ -79,7 +79,7 @@ public class BinarySearchTreeTest {
     }
 
     @Test
-    void reverseInOrder() {
+    public void reverseInOrder() {
         BinarySearchTree<String> t = new BinarySearchTree<>();
         t.insert("b", "B");
         t.insert("a", "A");
@@ -88,7 +88,7 @@ public class BinarySearchTreeTest {
     }
 
     @Test
-    void rangeSearchInclusiveAndPruned() {
+    public void rangeSearchInclusiveAndPruned() {
         BinarySearchTree<String> t = new BinarySearchTree<>();
         t.insert("a", "A");
         t.insert("b", "B");
@@ -103,7 +103,7 @@ public class BinarySearchTreeTest {
     }
 
     @Test
-    void emptyTree() {
+    public void emptyTree() {
         BinarySearchTree<String> t = new BinarySearchTree<>();
         assertTrue(t.isEmpty());
         assertEquals(0, t.size());
@@ -113,7 +113,7 @@ public class BinarySearchTreeTest {
     }
 
     @Test
-    void clear() {
+    public void clear() {
         BinarySearchTree<String> t = new BinarySearchTree<>();
         t.insert("a", "A");
         t.insert("b", "B");

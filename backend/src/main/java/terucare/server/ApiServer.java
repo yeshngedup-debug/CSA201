@@ -20,7 +20,7 @@ import java.util.concurrent.Executors;
  * again, zero external dependencies.
  *
  * The React frontend (Vite dev server, port 8443) talks to this API on port
- * 8080. CORS headers are sent on every response so the browser allows the
+ * 8090. CORS headers are sent on every response so the browser allows the
  * cross-origin calls during development.
  *
  * Endpoints:

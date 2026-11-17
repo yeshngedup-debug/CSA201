@@ -1,5 +1,33 @@
 # Teru Care — Change Log
 
+## M8 — Repository cleanup pass
+- Removed build artifacts from tracking and disk: `backend/out/` (20 `.class`
+  files; `backend/run.bat` recompiles all sources into `out/` on every run, so
+  nothing is lost), `backend/out-test/`, `dist/` (tracked build plus newer
+  untracked assets), backend logs (`backend.log`, `build_errors.txt`,
+  `gui-smoke.log`, `gui-smoke-err.log`), test CSVs (`export_test.csv`,
+  `test2.csv`, `test_export.csv`), and tool-generated `.playwright-mcp/`.
+- Removed stale agent-generated docs: `ARCHITECTURE_SUMMARY.md`,
+  `SIMPLE_ARCHITECTURE.md`, `FILE_ARCHITECTURE.md`, `PROJECT_AUDIT.md`
+  (tracked) and `AGENT_WORK_SUMMARY.md`, `COLOR_PALETTE_SUMMARY.md`,
+  `FIX_SUMMARY.md` (untracked). `AGENTS.md` and `CHANGELOG.md` kept.
+- Client (`src/api.ts`): dropped the four unused exports `fetchExpensesRange`,
+  `fetchStats`, `fetchExportCsv`, `searchExpenses` (zero callers; the backend
+  endpoints themselves are untouched for the course curriculum).
+- Client (`src/App.tsx`): dropped the unused `OfflineBanner` interface and the
+  dead `note` field on the add-expense modal form state, its submit payload,
+  and the local `Expense` type. `ApiExpense.note?` stays so persisted
+  `backend/data/expenses.json` rows with notes still typecheck.
+- Docs: `AGENTS.md` no longer references the non-existent `src/demoData.ts` /
+  demo mode or `DEPLOY.md`; the offline-state description now matches the real
+  "Can't reach the backend" empty state. `backend/README.md`'s `DEPLOY.md`
+  pointer replaced with the hosting steps inline.
+- Verified: `.\node_modules\.bin\tsc.cmd --noEmit` clean; `vite build` clean
+  (to a temp outDir, then removed — `dist/` stays deleted per the cleanup
+  decision). `backend/data/expenses.json` and `node_modules/` untouched.
+- No `.gitignore` re-added (removal was deliberate in bb66e7c); regenerable
+  outputs are removed here rather than ignored.
+
 ## M4 — Feature & Testing Pass
 - Backend: hand-written HashTable (chaining + resize 0.75), BST (date|id key + pruned range), Stack (LIFO undo), MergeSort (stable)
 - JUnit 4 tests: `test/terucare/dsa/HashTableTest.java`, BinarySearchTreeTest, StackTest, MergeSortTest, MergeSortStabilityTest; `test/terucare/service/ExpenseServiceTest.java`
@@ -7,7 +35,7 @@
 - Endpoints: `/api/health`, `/api/expenses`, `/api/expenses/export` (CSV, text/csv), `/api/expenses/range?from=&to=&category=`, `/api/categories/ranked`, `/api/summary`, `/api/stats`, `/api/undo`
 - `Expense` model: optional `note` (default ""), persisted by `FileStore`
 - `ApiServer`: CORS for Vite origin; consistent JSON error shapes (`{"error":...}` / `{"fields":...}`)
-- Client (`src/api.ts`): `ApiExpense.note?`, `fetchStats`, `fetchExpensesRange`, `searchExpenses`, `fetchExportCsv`
+- Client (`src/api.ts`): `ApiExpense.note?`, `fetchStats` (later removed in M8), `fetchExpensesRange` (later removed in M8), `searchExpenses` (later removed in M8), `fetchExportCsv` (later removed in M8)
 - Build: `tsc --noEmit` green; `vite build` green; `start.bat` / `stop.bat` working
 - Design: Pocketwise-style (`#080f20` canvas, mint `#74f6c8`, Inter + Space Grotesk, glass `.panel`, fixed sidebar, donut + center TOTAL, insights cards, mobile bottom tab)
 
@@ -43,8 +71,8 @@
     `http://localhost:8090/api` as the local fallback; exported `API_BASE` / `API_HOST` / `IS_REMOTE_API`.
   - `ApiUnreachableError` separates "no response at all" (server down, wrong URL, DNS, CORS, timeout) from an
     HTTP 4xx/5xx answer, so the UI can tell a network failure from a genuinely empty list.
-  - 15 s request timeout (6 s health probe) so a hung API cannot spin forever; `fetchExportCsv` now maps network
-    failures to the same typed error instead of an unhandled rejection.
+  - 15 s request timeout (6 s health probe) so a hung API cannot spin forever; `fetchExportCsv` (later removed in M8)
+    mapped network failures to the same typed error instead of an unhandled rejection.
   - Red **API offline** banner ("Cannot reach the Teru Care API … For local use start `backend\run.bat`. For
     production set `VITE_API_URL`.") with **Retry connection**, plus a green/red/amber connection pill in the
     header and a connection-aware footer (replaces the hard-coded "Java backend live on :8090").

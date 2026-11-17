@@ -1,4 +1,4 @@
-﻿package terucare.dsa;
+package terucare.dsa;
 
 import org.junit.Test;
 import static org.junit.Assert.*;
@@ -13,7 +13,7 @@ public class MergeSortStabilityTest {
     private record KV(String name, int order) {}
 
     @Test
-    void stableOnEqualValues() {
+    public void stableOnEqualValues() {
         // All equal values; after sorting by value (constant), the order should be unchanged.
         KV a = new KV("a", 0);
         KV b = new KV("b", 1);

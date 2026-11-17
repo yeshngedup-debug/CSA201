@@ -1,4 +1,4 @@
-﻿package terucare.dsa;
+package terucare.dsa;
 
 import org.junit.Test;
 import java.util.Collections;
@@ -10,23 +10,23 @@ import static org.junit.Assert.*;
 public class MergeSortTest {
 
     @Test
-    void empty() {
+    public void empty() {
         List<Map.Entry<String, Double>> empty = List.of();
         List<Map.Entry<String, Double>> result = MergeSort.sort(empty, Comparator.comparingDouble(Map.Entry<String, Double>::getValue).reversed());
         assertTrue(result.isEmpty());
     }
 
     @Test
-    void singleElement() {
+    public void singleElement() {
         Map.Entry<String, Double> e = Map.entry("a", 1.5);
         List<Map.Entry<String, Double>> result = MergeSort.sort(List.of(e), Comparator.comparingDouble(Map.Entry<String, Double>::getValue).reversed());
         assertEquals(1, result.size());
         assertEquals("a", result.get(0).getKey());
-        assertEquals(1.5, result.get(0).getValue());
+        assertEquals(1.5, result.get(0).getValue().doubleValue(), 0.000001);
     }
 
     @Test
-    void alreadySorted() {
+    public void alreadySorted() {
         List<Map.Entry<String, Double>> input = List.of(
                 Map.entry("a", 1.0),
                 Map.entry("b", 2.0),
@@ -36,7 +36,7 @@ public class MergeSortTest {
     }
 
     @Test
-    void reverseSorted() {
+    public void reverseSorted() {
         List<Map.Entry<String, Double>> input = List.of(
                 Map.entry("c", 3.0),
                 Map.entry("b", 2.0),
@@ -46,7 +46,7 @@ public class MergeSortTest {
     }
 
     @Test
-    void stabilityWithEqualKeys() {
+    public void stabilityWithEqualKeys() {
         // Create custom entries that compare equal in value; maintain insertion order when sorting stable
         List<Map.Entry<Integer, String>> input = List.of(
                 Map.entry(1, "first"),
@@ -60,15 +60,15 @@ public class MergeSortTest {
     }
 
     @Test
-    void descendingCategoryTotals() {
+    public void descendingCategoryTotals() {
         List<Map.Entry<String, Double>> input = List.of(
                 Map.entry("Food", 100.0),
                 Map.entry("Transport", 200.0),
                 Map.entry("Entertainment", 50.0));
         List<Map.Entry<String, Double>> result = MergeSort.sort(input, Comparator.comparingDouble(Map.Entry<String, Double>::getValue).reversed());
         assertEquals(java.util.List.of("Transport","Food","Entertainment"), result.stream().map(Map.Entry::getKey).toList());
-        assertEquals(200.0, result.get(0).getValue());
-        assertEquals(100.0, result.get(1).getValue());
-        assertEquals(50.0, result.get(2).getValue());
+        assertEquals(200.0, result.get(0).getValue().doubleValue(), 0.000001);
+        assertEquals(100.0, result.get(1).getValue().doubleValue(), 0.000001);
+        assertEquals(50.0, result.get(2).getValue().doubleValue(), 0.000001);
     }
 }

@@ -131,7 +131,7 @@ public class ExpenseService {
 
         String id = uniqueId(candidate.getId());
         Expense expense = new Expense(id, candidate.getDate(), round2(candidate.getAmount()),
-                candidate.getCategory(), candidate.getDescription());
+                candidate.getCategory(), candidate.getDescription(), candidate.getNote());
 
         index(expense);
         undoManager.recordAdd(expense);

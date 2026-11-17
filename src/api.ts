@@ -6,10 +6,13 @@
  * view: every add / delete / undo / clear goes through these calls.
  *
  * The backend must be running: backend\run.bat (listens on port 8090)
- * Override the URL with VITE_API_URL when running against a different host.
+ * In dev/preview the requests hit this same origin and Vite's /api proxy
+ * (vite.config.ts) forwards them to the backend, so no CORS is involved.
+ * Override the URL with VITE_API_URL when running against a different host
+ * (e.g. the deployed API URL on Vercel, including the /api suffix).
  */
 
-const API_BASE: string = import.meta.env.VITE_API_URL ?? "http://localhost:8090/api";
+const API_BASE: string = import.meta.env.VITE_API_URL ?? "/api";
 
 export interface ApiExpense {
   id: string;
@@ -62,28 +65,6 @@ export interface UndoResponse {
 
 export function fetchExpenses(): Promise<ExpenseListResponse> {
   return request<ExpenseListResponse>("/expenses");
-}
-
-export function fetchExpensesRange(from: string, to: string, category?: string): Promise<{ expenses: ApiExpense[]; from?: string; to?: string; category?: string }> {
-  const qs = new URLSearchParams();
-  if (from) qs.append("from", from);
-  if (to) qs.append("to", to);
-  if (category) qs.append("category", category);
-  const q = qs.toString() ? "?" + qs.toString() : "";
-  return request(`/expenses/range${q}`);
-}
-
-export function fetchStats(): Promise<Record<string, unknown>> {
-  return request("/stats");
-}
-
-export function fetchExportCsv(): Promise<string> {
-  return fetch(`${API_BASE}/expenses/export`, { headers: { "Accept": "text/csv" } })
-    .then(async res => { if (!res.ok) throw new ApiError("Export failed"); return res.text(); });
-}
-
-export function searchExpenses(q: string): Promise<ExpenseListResponse> {
-  return request<ExpenseListResponse>(`/expenses?q=${encodeURIComponent(q)}`);
 }
 
 export function addExpense(expense: Omit<ApiExpense, "id"> & { id?: string }): Promise<ApiExpense> {

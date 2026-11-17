@@ -9,12 +9,14 @@ rem    1. checks Java + Node.js are installed
 rem    2. installs frontend dependencies on first run
 rem    3. compiles the Java backend (always, so sources are never stale)
 rem    4. launches the backend API on port 8090 in its own window
-rem    5. launches the Vite dev server on port 8443 in its own window
-rem    6. waits until both actually answer, then opens the app in a browser
+rem    5. launches the desktop GUI (Swing) in its own window
+rem    6. launches the Vite dev server on port 8443 in its own window
+rem    7. waits until both services actually answer, then opens the app
 rem
 rem  Usage:
 rem    start.bat              normal start + open browser
 rem    start.bat /nobrowser   start without opening a browser
+rem    start.bat /nogui       start without the desktop GUI window
 rem    start.bat /nopause     do not wait for a keypress at the end (scripts)
 rem
 rem  Services that are already running are detected and reused instead of
@@ -37,10 +39,12 @@ set "WAIT_SECONDS=40"
 
 set "OPEN_BROWSER=1"
 set "DO_PAUSE=1"
+set "LAUNCH_GUI=1"
 
 :parse_args
 if "%~1"=="" goto :args_done
 if /i "%~1"=="/nobrowser" set "OPEN_BROWSER=0"
+if /i "%~1"=="/nogui"     set "LAUNCH_GUI=0"
 if /i "%~1"=="/nopause"   set "DO_PAUSE=0"
 shift
 goto :parse_args
@@ -129,7 +133,25 @@ if "%PROBE_OK%"=="1" (
     )
 )
 
-rem ---------- 5. frontend dev server --------------------------------------
+rem ---------- 5. desktop GUI ----------------------------------------------
+
+if not "%LAUNCH_GUI%"=="1" (
+    echo [..] Skipping the desktop GUI ^(/nogui^).
+) else (
+    set "GUI_RUNNING=0"
+    tasklist /FI "WINDOWTITLE eq Teru Care - Expense Tracker" /NH 2>nul | find /I "java" >nul
+    if not errorlevel 1 set "GUI_RUNNING=1"
+    if "%GUI_RUNNING%"=="1" (
+        echo [ok] Desktop GUI is already running - reusing it.
+    ) else (
+        echo [..] Starting the desktop GUI ^(Swing^)...
+        pushd "%ROOT%backend"
+        start "Teru Care Desktop GUI" cmd /k "java -cp out terucare.gui.TeruCareGui"
+        popd
+    )
+)
+
+rem ---------- 6. frontend dev server --------------------------------------
 
 call :probe "%APP_URL%"
 if "%PROBE_OK%"=="1" (
@@ -146,7 +168,7 @@ if "%PROBE_OK%"=="1" (
     )
 )
 
-rem ---------- 6. ready ----------------------------------------------------
+rem ---------- 7. ready ----------------------------------------------------
 
 echo.
 echo ==========================================================
@@ -156,9 +178,14 @@ echo   App      : %APP_URL%
 echo   API      : http://localhost:%API_PORT%/api
 echo   Health   : %API_URL%
 echo   Storage  : backend\data\expenses.json
+if "%LAUNCH_GUI%"=="1" (
+    echo   Desktop  : Teru Care - Expense Tracker window
+) else (
+    echo   Desktop  : skipped ^(/nogui^)
+)
 echo ----------------------------------------------------------
 echo   Shortcuts: Ctrl+N new expense, Ctrl+Z undo, Esc close
-echo   Stop     : run stop.bat, or close the two service windows
+echo   Stop     : run stop.bat, or close the service windows
 echo ==========================================================
 echo.
 

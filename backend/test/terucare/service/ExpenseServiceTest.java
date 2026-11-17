@@ -24,7 +24,8 @@ public class ExpenseServiceTest {
         try { svc.add(bad); fail("expected ValidationException"); }
         catch (Exception ex) { caught = ex; }
         assertNotNull(caught);
-        assertTrue(caught.getMessage().contains("date") || caught.getMessage().contains("amount") || caught.getMessage().contains("category"));
+        String msg = caught.getMessage().toLowerCase(Locale.ROOT);
+        assertTrue(msg.contains("date") || msg.contains("amount") || msg.contains("category"));
     }
 
     @Test
@@ -108,7 +109,7 @@ public class ExpenseServiceTest {
         ExpenseService svc2 = new ExpenseService(store);
         List<Expense> all = svc2.listAll();
         boolean found = all.stream().anyMatch(e -> "Health".equals(e.getCategory()) && e.getAmount() == 99.99);
-        assertTrue(found, "Expense persisted and loaded back");
+        assertTrue("Expense persisted and loaded back", found);
     }
 
     @Test
@@ -121,7 +122,7 @@ public class ExpenseServiceTest {
         assertEquals("remember this", saved.getNote());
         List<Expense> rangeAll = svc.searchByDateRange("2026-09-01", "2026-09-30");
         boolean hasNote = rangeAll.stream().anyMatch(e -> "remember this".equals(e.getNote()));
-        assertTrue(hasNote, "Note persisted through BST + persistence");
+        assertTrue("Note persisted through BST + persistence", hasNote);
         assertEquals(42.0, svc.summary().get("total"));
     }
 }

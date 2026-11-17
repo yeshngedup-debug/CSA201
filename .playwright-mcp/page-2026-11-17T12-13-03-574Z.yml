@@ -1,0 +1,55 @@
+- generic [ref=f4e5]:
+  - complementary [ref=f4e6]:
+    - generic [ref=f4e7]:
+      - img "Teru Care" [ref=f4e9]
+      - generic [ref=f4e10]: Teru Care.
+    - paragraph [ref=f4e11]: MENU
+    - navigation [ref=f4e12]:
+      - button "Dashboard" [ref=f4e13] [cursor=pointer]:
+        - generic [aria-hidden] [ref=f4e15]: 
+      - button "Transactions" [ref=f4e17] [cursor=pointer]:
+        - generic [aria-hidden] [ref=f4e18]: 
+    - paragraph [ref=f4e20]: ACTIONS
+    - generic [ref=f4e21]:
+      - button "Export CSV" [ref=f4e22] [cursor=pointer]:
+        - generic [aria-hidden] [ref=f4e23]: 
+      - button "Undo Last" [disabled] [ref=f4e25]:
+        - generic [aria-hidden] [ref=f4e26]: 
+      - button "Clear data" [ref=f4e28] [cursor=pointer]:
+        - generic [aria-hidden] [ref=f4e29]: 
+    - generic [ref=f4e31]:
+      - generic [ref=f4e32]:
+        - generic [aria-hidden] [ref=f4e33]: 
+        - generic [ref=f4e34]:
+          - strong [ref=f4e35]: Private by design
+          - generic [ref=f4e36]: Your data stays on this machine, stored by the local Java backend.
+      - generic [ref=f4e37]:
+        - generic [ref=f4e38]: T
+        - generic [ref=f4e39]:
+          - strong [ref=f4e40]: Teru Care
+          - generic [ref=f4e41]: CSA201 · Group 1
+  - text: 
+  - main [ref=f4e42]:
+    - generic [ref=f4e43]:
+      - generic [ref=f4e44]:
+        - paragraph [ref=f4e45]:
+          - text: Teru Care
+          - generic [ref=f4e47]: /
+          - text: Overview
+        - heading "Track every expense. Understand your month." [level=1] [ref=f4e48]
+        - paragraph [ref=f4e49]: Review your total spending, recent transactions, and category breakdown in one place.
+      - generic [ref=f4e50]:
+        - generic [ref=f4e51]:
+          - generic [aria-hidden] [ref=f4e52]: 
+          - text: November 2026
+        - button "Add Expense" [ref=f4e53] [cursor=pointer]:
+          - generic [aria-hidden] [ref=f4e54]: 
+          - text: Add Expense
+    - generic [ref=f4e56]:
+      - generic [aria-hidden] [ref=f4e58]: 
+      - heading "No expenses yet" [level=3] [ref=f4e59]
+      - paragraph [ref=f4e60]: Add your first expense and the dashboard will come to life.
+      - button "Add first expense" [ref=f4e61] [cursor=pointer]:
+        - generic [aria-hidden] [ref=f4e62]: 
+        - text: Add first expense
+  - text:   
